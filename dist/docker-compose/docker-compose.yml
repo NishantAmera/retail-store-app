@@ -145,7 +145,7 @@ services:
     ports:
       - 9090:9090
     volumes:
-      - /bmc/retail-store-sample-app/dist/docker-compose/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - /bmc/retail-store-app/dist/docker-compose/prometheus.yml:/etc/prometheus/prometheus.yml:ro
   
   grafana:
     image: grafana/grafana
