@@ -5,12 +5,12 @@ scrape_configs:
   - job_name: 'sample-app'
     metrics_path: '/actuator/prometheus'
     static_configs:
-      - targets: ['15.206.205.74:8888']
+      - targets: ['3.110.45.123:8888']
         labels:
           service: 'ratail-app'
   - job_name: 'docker'
     static_configs:
-      - targets: ['15.206.205.74:9323']
+      - targets: ['3.110.45.123:9323']
         labels:
           service: 'docker-system'
 
