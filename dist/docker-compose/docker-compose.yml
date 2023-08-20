@@ -28,14 +28,17 @@ services:
       - ENDPOINTS_CHECKOUT=http://checkout:8080
       - ENDPOINTS_ASSETS=http://assets:8080
     hostname: ui
-    image: public.ecr.aws/aws-containers/retail-store-sample-ui:0.5.0
+    image: public.ecr.aws/aws-containers/retail-store-sample-ui:0.4.0
     restart: always
-    mem_limit: 512m
+    mem_limit: 256m
     cap_drop:
       - ALL
+    links:
+      - prometheus:prometheus
+      - grafana:grafana
   catalog:
     hostname: catalog
-    image: public.ecr.aws/aws-containers/retail-store-sample-catalog:0.5.0
+    image: public.ecr.aws/aws-containers/retail-store-sample-catalog:0.4.0
     restart: always
     environment:
       - GIN_MODE=release
@@ -56,7 +59,7 @@ services:
     mem_limit: 128m
   carts:
     hostname: carts
-    image: public.ecr.aws/aws-containers/retail-store-sample-cart:0.5.0
+    image: public.ecr.aws/aws-containers/retail-store-sample-cart:0.4.0
     restart: always
     environment:
       - JAVA_OPTS=-XX:MaxRAMPercentage=75.0 -Djava.security.egd=file:/dev/urandom
@@ -76,7 +79,7 @@ services:
     mem_limit: 256m
   orders:
     hostname: orders
-    image: public.ecr.aws/aws-containers/retail-store-sample-orders:0.5.0
+    image: public.ecr.aws/aws-containers/retail-store-sample-orders:0.4.0
     restart: always
     environment:
       - JAVA_OPTS=-XX:MaxRAMPercentage=75.0 -Djava.security.egd=file:/dev/urandom
@@ -104,7 +107,7 @@ services:
       - MYSQL_PASSWORD=${MYSQL_PASSWORD}
     mem_limit: 128m
   checkout:
-    image: public.ecr.aws/aws-containers/retail-store-sample-checkout:0.5.0
+    image: public.ecr.aws/aws-containers/retail-store-sample-checkout:0.4.0
     hostname: checkout
     restart: always
     read_only: true
@@ -125,7 +128,7 @@ services:
     hostname: assets
     environment:
       - PORT=8080
-    image: public.ecr.aws/aws-containers/retail-store-sample-assets:0.5.0
+    image: public.ecr.aws/aws-containers/retail-store-sample-assets:0.4.0
     restart: always
     mem_limit: 64m
     cap_drop:
@@ -135,3 +138,24 @@ services:
     ports:
       - "5672:5672"
       - "15672:15672"
+ #monitoring
+  prometheus:
+    image: prom/prometheus
+    container_name: prometheus
+    ports:
+      - 9090:9090
+    volumes:
+      - /bmc/retail-store-sample-app/dist/docker-compose/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+  
+  grafana:
+    image: grafana/grafana
+    container_name: grafana
+    ports:
+      - 3000:3000
+    environment:
+      - GF_INSTALL_PLUGINS=grafana-piechart-panel
+    volumes:
+      - grafana-storage:/var/lib/grafana
+
+volumes:
+  grafana-storage:
