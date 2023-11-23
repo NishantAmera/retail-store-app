@@ -24,3 +24,12 @@ management:
     web:
       exposure:
         include: '*'
+
+opentracing:
+  jaeger:
+    udp-sender:
+      host: localhost
+      port: 6831
+    log-spans: true
+    const-sampler:
+      decision: true
